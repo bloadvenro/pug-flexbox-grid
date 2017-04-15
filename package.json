@@ -1,0 +1,31 @@
+{
+  "name": "pug-flexbox-grid",
+  "version": "1.0.0",
+  "description": "The tool is just like react-flexbox-grid.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bloadvenro/pug-flexbox-grid.git"
+  },
+  "keywords": [
+    "pug",
+    "pugjs",
+    "flexbox",
+    "grid"
+  ],
+  "author": "Viktor Petevotov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bloadvenro/pug-flexbox-grid/issues"
+  },
+  "homepage": "https://github.com/bloadvenro/pug-flexbox-grid#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "mocha-clean": "^1.0.0",
+    "pug": "^2.0.0-beta11"
+  }
+}

@@ -1,0 +1,7 @@
+-
+  function __RFG_Transform__(attrs, props, cb) {
+    Object
+      .keys(attrs)
+      .filter(a => !!~props.indexOf(a))
+      .forEach(a => cb(a))
+  }

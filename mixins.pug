@@ -1,0 +1,113 @@
+-
+  function __RFG_Transform__(attrs, props, cb) {
+    // Let set flexbox-grid attributes via class names.
+    const classAttribute = attrs.class || ''
+    const classList = classAttribute.split(' ')
+
+    // Parse classes to find class-as-attribute values.
+    const parsedAttributes = classList.reduce((parsedAttributes, className) =>
+    {
+      // If classname fits attribute signature, we will get an attribute here.
+      const attrs = props.reduce((attrs, p) =>
+      {
+        if (className.indexOf(`${p}-`) === 0)
+        {
+          // Find stuff like `xs_10`, `last_md` and etc.
+          const _className = className.split('-')
+          attrs[_className[0]] = _className[1]
+        }
+        else if (className === p)
+        {
+          attrs[p] = true
+        }
+
+        return attrs
+      }, {})
+
+      if (Object.keys(attrs).length > 0)
+        parsedAttributes = Object.assign({}, parsedAttributes, attrs)
+      else parsedAttributes.class.push(className)
+
+      return parsedAttributes
+
+    }, { class: [] })
+
+    parsedAttributes.class = parsedAttributes.class.join(' ')
+    attrs = Object.assign(attrs, parsedAttributes)
+
+    Object
+      .keys(attrs)
+      .filter(a => !!~props.indexOf(a))
+      .forEach(a => cb(a))
+  }
+
+mixin Grid
+  -
+    let className = 'container'
+
+    if (attributes.fluid)
+    {
+      className = 'container-fluid'
+      delete attributes.fluid
+    }
+
+    const classList = attributes.class ? attributes.class.split(' ') : []
+
+    if (classList.length > 0)
+    {
+      const indexOfFluid = classList.indexOf('fluid')
+
+      if (!!~indexOfFluid)
+      {
+        className = 'container-fluid'
+        attributes.class = delete classList[indexOfFluid] && classList.join(' ')
+      }
+    }
+
+  div(class=className)&attributes(attributes)
+    block
+
+
+mixin Row
+  -
+    let className = ['row'] 
+
+    // Alignment.
+    __RFG_Transform__(attributes, ['start', 'center', 'end', 'top', 'middle', 'bottom'],
+      a => className.push(`${a}-${attributes[a]}`) && delete attributes[a])
+
+    // Distribution.
+    __RFG_Transform__(attributes, ['around', 'between'],
+      a => className.push(`${a}-${attributes[a]}`) && delete attributes[a])
+
+    // Reverse.
+    __RFG_Transform__(attributes, ['reverse'],
+      a => className.push(a) && delete attributes[a])
+
+  div(class=className.join(' '))&attributes(attributes)
+    block
+
+
+mixin Col
+  -
+    let className = []
+
+    //- Width.
+    __RFG_Transform__(attributes, ['xs', 'sm', 'md', 'lg'], a => {
+      const c = typeof attributes[a] === 'boolean' ? `col-${a}` : `col-${a}-${attributes[a]}`
+      className.push(c) && delete attributes[a]
+    })
+
+    //- Offset.
+    __RFG_Transform__(attributes, ['xsOffset', 'smOffset', 'mdOffset', 'lgOffset'], a => {
+      const c = `col-${a.substr(0, 2)}-${a.substr(2).toLowerCase()}-${attributes[a]}`
+      className.push(c) && delete attributes[a]
+    })
+
+    //- Reordering.
+    __RFG_Transform__(attributes, ['first', 'last'],
+    a => className.push(`${a}-${attributes[a]}`) && delete attributes[a])
+
+
+  div(class=className.join(' '))&attributes(attributes)
+    block
